@@ -1,0 +1,6 @@
+/* AI Co-Pilot Plugin Styles */
+
+/* Modal styling improvements */
+.modal textarea {
+    resize: vertical;
+}

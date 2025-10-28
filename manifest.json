@@ -1,0 +1,10 @@
+{
+  "id": "ai-copilot",
+  "name": "AI Co-Pilot",
+  "version": "1.0.0",
+  "minAppVersion": "1.6.0",
+  "description": "AI-powered note editing assistant that helps you modify your notes using natural language prompts.",
+  "author": "Eric Anderson",
+  "authorUrl": "https://github.com/aroc",
+  "isDesktopOnly": false
+}
