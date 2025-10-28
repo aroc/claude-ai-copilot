@@ -66,26 +66,59 @@ export default class AICopilotPlugin extends Plugin {
 			dangerouslyAllowBrowser: true,
 		});
 
-		try {
-			const message = await anthropic.messages.create({
-				model: this.settings.modelName,
-				max_tokens: 8096,
-				system: SYSTEM_PROMPT,
-				messages: [
-					{
-						role: 'user',
-						content: `Current note content:\n\n${noteContent}\n\nUser request: ${userPrompt}\n\nPlease return the complete modified note:`
-					}
-				]
-			});
+		const tools = [
+			{
+				type: 'web_fetch_20250910',
+				name: 'web_fetch',
+				max_uses: 5
+			} as any,
+			{
+				type: 'web_search_20250305',
+				name: 'web_search',
+				max_uses: 5
+			} as any
+		];
 
-			// Extract the text content from the response
-			const textContent = message.content.find(block => block.type === 'text');
-			if (!textContent || textContent.type !== 'text') {
+		const conversationHistory: any[] = [
+			{
+				role: 'user',
+				content: `Current note content:\n\n${noteContent}\n\nUser request: ${userPrompt}\n\nPlease return the complete modified note:`
+			}
+		];
+
+		try {
+			const message = await anthropic.messages.create(
+				{
+					model: this.settings.modelName,
+					max_tokens: 8096,
+					system: SYSTEM_PROMPT,
+					messages: conversationHistory,
+					tools: tools
+				},
+				{
+					headers: {
+						'anthropic-beta': 'web-fetch-2025-09-10'
+					}
+				}
+			);
+
+			console.log('Message stop_reason:', message.stop_reason);
+			console.log('Message content:', JSON.stringify(message.content, null, 2));
+
+			// web_search and web_fetch are server-side tools, so the API handles them automatically
+			// The response will contain both the tool use and the final text in a single response
+			// We need to extract and properly concatenate text content blocks
+			const textBlocks = message.content.filter((block: any) => block.type === 'text');
+
+			if (textBlocks.length === 0) {
 				throw new Error('No text content in AI response');
 			}
 
-			return textContent.text;
+			// Concatenate all text blocks without extra spacing
+			// (citations appear as separate text blocks that should flow inline)
+			const finalText = textBlocks.map((block: any) => block.text).join('');
+
+			return finalText;
 		} catch (error) {
 			console.error('AI processing error:', error);
 			throw new Error(`Failed to process with AI: ${error.message}`);
@@ -168,13 +201,8 @@ class PromptModal extends Modal {
 			return;
 		}
 
-		// Get the current note content
-		const currentContent = this.editor.getValue();
-
-		if (!currentContent) {
-			new Notice('No content in current note');
-			return;
-		}
+		// Get the current note content (empty string if note is empty)
+		const currentContent = this.editor.getValue() || '';
 
 		// Close the modal
 		this.close();
@@ -185,6 +213,19 @@ class PromptModal extends Modal {
 		try {
 			// Call the AI API
 			const modifiedContent = await this.plugin.processWithAI(currentContent, prompt);
+
+			// DEBUG: Log the full AI response
+			console.log('AI Response:', modifiedContent);
+			console.log('AI Response length:', modifiedContent.length);
+
+			// Verify we're still on the same view before applying changes
+			const activeView = this.app.workspace.getActiveViewOfType(MarkdownView);
+			if (!activeView || activeView !== this.view) {
+				processingNotice.hide();
+				new Notice('Note context changed. AI response not applied. Check console for the response.');
+				console.warn('User switched notes. AI response was not applied.');
+				return;
+			}
 
 			// Replace the entire note content
 			this.editor.setValue(modifiedContent);

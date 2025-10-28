@@ -6,6 +6,7 @@ An AI-powered assistant plugin for Obsidian that helps you edit and improve your
 
 - **Natural Language Editing**: Use simple prompts to modify your notes (e.g., "Fix spelling errors", "Add headers", "Summarize this")
 - **Powered by Claude**: Uses Anthropic's Claude Sonnet 4.5 for intelligent, context-aware editing
+- **Web Search & Fetch**: Claude can search the web and fetch content from URLs to enhance your notes
 - **Safe Modifications**: The AI is instructed to only change what you explicitly request, preserving the rest of your note
 - **Simple Interface**: Quick command palette access with an easy-to-use prompt modal
 
@@ -51,6 +52,16 @@ An AI-powered assistant plugin for Obsidian that helps you edit and improve your
    - You'll need to create an account and add credits
 4. (Optional) Customize the model name if you want to use a different Claude model
 
+### Enabling Web Search
+
+To use web search functionality (e.g., "Search for the latest React best practices and add them to this note"), you must **enable web search in your Anthropic account**:
+
+1. Go to [https://console.anthropic.com/](https://console.anthropic.com/)
+2. Navigate to your account settings
+3. Enable web search for your API key
+
+**Note**: Web search uses your API credits. Web fetch (fetching content from specific URLs) works automatically without additional setup.
+
 ## Usage
 
 1. Open any note in Obsidian
@@ -63,6 +74,7 @@ An AI-powered assistant plugin for Obsidian that helps you edit and improve your
 
 ### Example Prompts
 
+**Basic Editing:**
 - "Fix all spelling and grammar errors"
 - "Add headers to organize this content into sections"
 - "Summarize this note in 3 bullet points at the top"
@@ -70,6 +82,15 @@ An AI-powered assistant plugin for Obsidian that helps you edit and improve your
 - "Add tags at the bottom based on the content"
 - "Rewrite this in a more professional tone"
 - "Expand on the second paragraph with more details"
+
+**With Web Search:**
+- "Search for the latest best practices on TypeScript and add a section to this note"
+- "Find recent news about AI and create a summary"
+- "Look up current React hooks patterns and incorporate them here"
+
+**With Web Fetch:**
+- "Fetch https://example.com/article and add a summary to this note"
+- "Get the content from https://example.com/doc.pdf and extract the key points"
 
 ## How It Works
 
