@@ -145,6 +145,9 @@ class PromptModal extends Modal {
 		const { contentEl } = this;
 		contentEl.empty();
 
+		// Add a specific class to this modal for targeted styling
+		this.modalEl.addClass('ai-copilot-modal');
+
 		contentEl.createEl('h2', { text: 'AI Co-Pilot' });
 
 		contentEl.createEl('p', {

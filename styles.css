@@ -1,13 +1,13 @@
 /* AI Co-Pilot Plugin Styles */
 
-/* Modal styling improvements */
-.modal textarea {
+/* Modal styling improvements - scoped to only this plugin's modal */
+.ai-copilot-modal textarea {
     resize: vertical;
 }
 
-/* iOS-specific: prevent keyboard from covering modal */
+/* iOS-specific: prevent keyboard from covering modal - scoped to only this plugin's modal */
 @supports (-webkit-touch-callout: none) {
-    .modal {
+    .modal.ai-copilot-modal {
         position: fixed !important;
         top: 10% !important;
         max-height: 40vh !important;
