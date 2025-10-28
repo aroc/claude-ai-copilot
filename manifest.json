@@ -1,7 +1,7 @@
 {
   "id": "ai-copilot",
   "name": "Claude AI Copilot",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "minAppVersion": "1.6.0",
   "description": "AI-powered note editing assistant that helps you modify your notes using natural language prompts.",
   "author": "Eric Anderson",
