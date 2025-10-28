@@ -4,3 +4,12 @@
 .modal textarea {
     resize: vertical;
 }
+
+/* iOS-specific: prevent keyboard from covering modal */
+@supports (-webkit-touch-callout: none) {
+    .modal {
+        position: fixed !important;
+        top: 10% !important;
+        max-height: 40vh !important;
+    }
+}
