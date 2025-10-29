@@ -1,9 +1,9 @@
 {
   "id": "ai-copilot",
   "name": "Claude AI Copilot",
-  "version": "1.0.5",
+  "version": "1.1.0",
   "minAppVersion": "1.6.0",
-  "description": "AI-powered note editing assistant that helps you modify your notes using natural language prompts.",
+  "description": "AI-powered vault assistant that can edit notes, create files, and organize your entire vault using natural language prompts with Claude AI.",
   "author": "Eric Anderson",
   "authorUrl": "https://github.com/aroc",
   "isDesktopOnly": false
