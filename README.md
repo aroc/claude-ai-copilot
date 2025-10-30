@@ -177,8 +177,12 @@ Potential features for future versions:
 
 ## License
 
-MIT
+This plugin is licensed under the [GNU Affero General Public License v3.0 (AGPL-3.0)](./LICENSE).
+
+If you wish to use or distribute this software as part of a commercial or closed-source product,
+please contact **Eric Anderson** for a commercial license.
 
 ## Disclaimer
 
 This is an experimental plugin. Use at your own risk. Always keep backups of your important notes.
+
