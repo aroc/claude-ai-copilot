@@ -2,6 +2,10 @@
 
 Claude AI powered vault assistant that can edit, create, and delete notes across your entire vault using natural language.
 
+The focus of this plugin is fast and easy editing of 1 or more notes via quick one-off prompt submissions, not chatting with your notes. There is no chat interface, just a modal to submit prompts. This makes for really simple but powerful edits. Ex: "Find all the tasks I didn't complete in the last 3 daily notes and copy them to today's daily note".
+
+Web search tools are enabled for Claude, so it can also find information from the open internet to include in notes.
+
 ## Features
 
 - **Natural Language Editing**: Use simple prompts to modify your notes (e.g., "Fix spelling errors", "Add headers", "Summarize this")
