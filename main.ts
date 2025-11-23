@@ -1066,8 +1066,14 @@ class AgentResultsModal extends Modal {
 
 		contentEl.createEl('h2', { text: 'Summary of changes Claude made' });
 
+		// Create scrollable content container
+		const scrollContainer = contentEl.createDiv();
+		scrollContainer.style.maxHeight = '60vh';
+		scrollContainer.style.overflowY = 'auto';
+		scrollContainer.style.marginBottom = '1em';
+
 		if (this.operations.length === 0) {
-			contentEl.createEl('p', {
+			scrollContainer.createEl('p', {
 				text: 'Claude completed without performing any file operations.',
 				cls: 'setting-item-description'
 			});
@@ -1081,8 +1087,8 @@ class AgentResultsModal extends Modal {
 
 			// Files read
 			if (reads.length > 0) {
-				contentEl.createEl('h3', { text: `Files Read (${reads.length})` });
-				const readList = contentEl.createEl('ul');
+				scrollContainer.createEl('h3', { text: `Files Read (${reads.length})` });
+				const readList = scrollContainer.createEl('ul');
 				reads.forEach(op => {
 					readList.createEl('li', { text: op.path });
 				});
@@ -1090,8 +1096,8 @@ class AgentResultsModal extends Modal {
 
 			// Files created
 			if (creates.length > 0) {
-				contentEl.createEl('h3', { text: `Files Created (${creates.length})` });
-				const createList = contentEl.createEl('ul');
+				scrollContainer.createEl('h3', { text: `Files Created (${creates.length})` });
+				const createList = scrollContainer.createEl('ul');
 				createList.style.color = 'var(--text-success)';
 				creates.forEach(op => {
 					createList.createEl('li', { text: op.path });
@@ -1100,8 +1106,8 @@ class AgentResultsModal extends Modal {
 
 			// Files updated
 			if (writes.length > 0) {
-				contentEl.createEl('h3', { text: `Files Updated (${writes.length})` });
-				const writeList = contentEl.createEl('ul');
+				scrollContainer.createEl('h3', { text: `Files Updated (${writes.length})` });
+				const writeList = scrollContainer.createEl('ul');
 				writeList.style.color = 'var(--text-warning)';
 				writes.forEach(op => {
 					writeList.createEl('li', { text: op.path });
@@ -1110,8 +1116,8 @@ class AgentResultsModal extends Modal {
 
 			// Files renamed
 			if (renames.length > 0) {
-				contentEl.createEl('h3', { text: `Files Renamed (${renames.length})` });
-				const renameList = contentEl.createEl('ul');
+				scrollContainer.createEl('h3', { text: `Files Renamed (${renames.length})` });
+				const renameList = scrollContainer.createEl('ul');
 				renameList.style.color = 'var(--text-accent)';
 				renames.forEach(op => {
 					renameList.createEl('li', { text: `${op.path} → ${op.newPath}` });
@@ -1120,8 +1126,8 @@ class AgentResultsModal extends Modal {
 
 			// Files deleted
 			if (deletes.length > 0) {
-				contentEl.createEl('h3', { text: `Files Deleted (${deletes.length})` });
-				const deleteList = contentEl.createEl('ul');
+				scrollContainer.createEl('h3', { text: `Files Deleted (${deletes.length})` });
+				const deleteList = scrollContainer.createEl('ul');
 				deleteList.style.color = 'var(--text-error)';
 				deletes.forEach(op => {
 					deleteList.createEl('li', { text: op.path });
