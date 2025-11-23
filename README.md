@@ -1,6 +1,6 @@
 # Claude AI Copilot for Obsidian
 
-Claude AI powered vault assistant that can edit notes, create files, and organize your entire vault using natural language.
+Claude AI powered vault assistant that can edit, create, and delete notes across your entire vault using natural language.
 
 ## Features
 
