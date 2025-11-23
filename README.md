@@ -1,6 +1,6 @@
-# AI Co-Pilot for Obsidian
+# Claude AI Copilot for Obsidian
 
-An AI-powered assistant plugin for Obsidian that helps you edit and improve your notes using natural language prompts.
+Claude AI powered vault assistant that can edit notes, create files, and organize your entire vault using natural language.
 
 ## Features
 
