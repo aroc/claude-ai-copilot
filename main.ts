@@ -13,6 +13,8 @@ const DEFAULT_SETTINGS: AICopilotSettings = {
 	enableDeleteFiles: false
 }
 
+const PREFERENCES_FILE_NAME = 'CLAUDE_AI_COPILOT_INSTRUCTIONS.md';
+
 const SINGLE_NOTE_SYSTEM_PROMPT = `You are an AI assistant helping to edit and improve notes in Obsidian.
 
 IMPORTANT: The user will provide you with the full content of their current note and a specific request for changes. You must return the COMPLETE note with only the requested changes applied. Do NOT make any changes beyond what the user explicitly requests.
@@ -133,6 +135,23 @@ export default class AICopilotPlugin extends Plugin {
 		await this.saveData(this.settings);
 	}
 
+	// Helper method to read user preferences from the vault
+	async getUserPreferences(): Promise<string | null> {
+		try {
+			const file = this.app.vault.getAbstractFileByPath(PREFERENCES_FILE_NAME);
+
+			if (!file || !(file instanceof TFile)) {
+				return null;
+			}
+
+			const content = await this.app.vault.read(file);
+			return content.trim();
+		} catch (error) {
+			console.warn('Error reading preferences file:', error);
+			return null;
+		}
+	}
+
 	// Simple single-note processing (original behavior)
 	async processWithAI(noteContent: string, userPrompt: string): Promise<string> {
 		if (!this.settings.anthropicApiKey) {
@@ -178,12 +197,19 @@ export default class AICopilotPlugin extends Plugin {
 			}
 		];
 
+		// Read user preferences and append to system prompt if they exist
+		const userPreferences = await this.getUserPreferences();
+		let systemPrompt = SINGLE_NOTE_SYSTEM_PROMPT;
+		if (userPreferences) {
+			systemPrompt += `\n\n## User Preferences\n\nThe user has provided the following preferences and instructions:\n\n${userPreferences}`;
+		}
+
 		try {
 			const message = await anthropic.messages.create(
 				{
 					model: this.settings.modelName,
 					max_tokens: 8096,
-					system: SINGLE_NOTE_SYSTEM_PROMPT,
+					system: systemPrompt,
 					messages: conversationHistory,
 					tools: tools
 				},
@@ -425,6 +451,13 @@ export default class AICopilotPlugin extends Plugin {
 			}
 		];
 
+		// Read user preferences and append to system prompt if they exist
+		const userPreferences = await this.getUserPreferences();
+		let vaultSystemPrompt = getVaultAgentSystemPrompt(this.settings.enableDeleteFiles);
+		if (userPreferences) {
+			vaultSystemPrompt += `\n\n## User Preferences\n\nThe user has provided the following preferences and instructions:\n\n${userPreferences}`;
+		}
+
 		try {
 			let continueLoop = true;
 			let iterationCount = 0;
@@ -438,7 +471,7 @@ export default class AICopilotPlugin extends Plugin {
 					{
 						model: this.settings.modelName,
 						max_tokens: 8096,
-						system: getVaultAgentSystemPrompt(this.settings.enableDeleteFiles),
+						system: vaultSystemPrompt,
 						messages: messages,
 						tools: tools
 					},
