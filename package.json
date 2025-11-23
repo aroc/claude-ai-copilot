@@ -1,6 +1,6 @@
 {
   "name": "obsidian-claude-ai-copilot",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "AI-powered vault assistant for Obsidian with full vault access capabilities",
   "main": "main.js",
   "scripts": {
