@@ -1,7 +1,7 @@
 {
 	"id": "claude-ai-copilot",
 	"name": "Claude AI Copilot",
-	"version": "2.5.0",
+	"version": "2.6.0",
 	"minAppVersion": "1.6.0",
 	"description": "Claude-powered vault assistant for fast, one-shot note edits. Creates, modifies, and deletes notes across your vault via a single prompt. No chat UI—just a modal for quick commands, with optional web search support.",
 	"author": "Eric Anderson",
