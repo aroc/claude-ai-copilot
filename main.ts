@@ -856,15 +856,16 @@ ${userPrompt}
 // Modal for editing just the current note
 class SingleNotePromptModal extends Modal {
 	plugin: AICopilotPlugin;
-	editor: Editor;
-	view: MarkdownView;
 	promptInput: HTMLTextAreaElement;
+	filePath: string;
+	initialContent: string;
 
 	constructor(app: App, plugin: AICopilotPlugin, editor: Editor, view: MarkdownView) {
 		super(app);
 		this.plugin = plugin;
-		this.editor = editor;
-		this.view = view;
+		this.filePath = view.file?.path || '';
+		// Capture content immediately while editor reference is guaranteed valid
+		this.initialContent = editor.getValue() || '';
 	}
 
 	onOpen() {
@@ -925,7 +926,8 @@ class SingleNotePromptModal extends Modal {
 			return;
 		}
 
-		const currentContent = this.editor.getValue() || '';
+		// Use content captured at modal construction time
+		const currentContent = this.initialContent;
 
 		this.close();
 
@@ -946,15 +948,26 @@ class SingleNotePromptModal extends Modal {
 				return;
 			}
 
+			// Get the file and verify we're still on the same note
+			const file = this.app.vault.getAbstractFileByPath(this.filePath);
+			if (!file || !(file instanceof TFile)) {
+				processingNotice.hide();
+				new Notice('Note context changed. AI response not applied. Check console for the response.');
+				console.warn('Original file not found or changed. AI response was not applied.');
+				return;
+			}
+
+			// Check if user switched to a different note
 			const activeView = this.app.workspace.getActiveViewOfType(MarkdownView);
-			if (!activeView || activeView !== this.view) {
+			if (activeView?.file?.path && activeView.file.path !== this.filePath) {
 				processingNotice.hide();
 				new Notice('Note context changed. AI response not applied. Check console for the response.');
 				console.warn('User switched notes. AI response was not applied.');
 				return;
 			}
 
-			this.editor.setValue(modifiedContent);
+			// Use vault.modify() for reliable cross-platform file updates
+			await this.app.vault.modify(file, modifiedContent);
 
 			processingNotice.hide();
 			new Notice('Note updated successfully!');
