@@ -21,8 +21,9 @@ Rules:
 - If the note is empty, generate the requested content from scratch
 - If the note has existing content, prefer appending or inserting new content rather than replacing existing content, unless the user explicitly asks to replace or modify specific parts
 - Only modify what the user specifically asks you to change
-- Preserve all other content exactly as it appears
+- Preserve all other content EXACTLY as it appears - do not reformat, restructure, or modify anything that wasn't explicitly requested
 - Maintain the original formatting, structure, and style
+- Do not add headings, formatting, or structure changes unless explicitly requested
 - Do not add unnecessary improvements or suggestions unless asked
 - Return the entire note content, not just the changed parts
 - Do not include any explanations or comments about the changes
@@ -33,11 +34,13 @@ LIMITATIONS:
 - If the user asks to rename the file, create multiple files, or make vault-wide changes, return ONLY this message: [ERROR: Please use the 'Make changes anywhere with Claude' command to rename files, create new files, or make changes across multiple notes]
 - Do not attempt to fulfill requests outside of editing the current note's content
 
-CRITICAL FORMATTING RULE:
+CRITICAL FORMATTING RULES:
 - NEVER wrap your response in markdown code blocks (i.e., do NOT use \`\`\`markdown ... \`\`\`)
 - Your entire response is already treated as markdown content
 - Return the raw note content directly without any code block wrapper
 - Wrapping content in code blocks will break the note formatting in Obsidian
+- Do NOT include any part of the user prompt, metadata, or instructions in your response
+- Your response should ONLY contain the modified note content, nothing else
 
 Your response should be the complete note content, ready to replace the current note.`;
 
@@ -103,8 +106,17 @@ export default class AICopilotPlugin extends Plugin {
 		this.addCommand({
 			id: 'edit-current-note',
 			name: 'Edit note with AI',
-			editorCallback: (editor: Editor, view: MarkdownView) => {
-				new SingleNotePromptModal(this.app, this, editor, view).open();
+			checkCallback: (checking: boolean) => {
+				const editor = this.app.workspace.activeEditor?.editor;
+				const view = this.app.workspace.getActiveViewOfType(MarkdownView);
+
+				if (editor && view) {
+					if (!checking) {
+						new SingleNotePromptModal(this.app, this, editor, view).open();
+					}
+					return true;
+				}
+				return false;
 			}
 		});
 
@@ -112,8 +124,17 @@ export default class AICopilotPlugin extends Plugin {
 		this.addCommand({
 			id: 'act-on-vault',
 			name: 'Make changes anywhere with Claude',
-			editorCallback: (editor: Editor, view: MarkdownView) => {
-				new VaultAgentPromptModal(this.app, this, editor, view).open();
+			checkCallback: (checking: boolean) => {
+				const editor = this.app.workspace.activeEditor?.editor;
+				const view = this.app.workspace.getActiveViewOfType(MarkdownView);
+
+				if (editor && view) {
+					if (!checking) {
+						new VaultAgentPromptModal(this.app, this, editor, view).open();
+					}
+					return true;
+				}
+				return false;
 			}
 		});
 
@@ -174,7 +195,17 @@ export default class AICopilotPlugin extends Plugin {
 		const conversationHistory: any[] = [
 			{
 				role: 'user',
-				content: `Current date and time: ${dateTimeString} (${timeZone})\n\nCurrent note content:\n\n${noteContent}\n\nUser request: ${userPrompt}\n\nPlease return the complete modified note:`
+				content: `<context>
+<current_datetime>${dateTimeString} (${timeZone})</current_datetime>
+</context>
+
+<note_content>
+${noteContent}
+</note_content>
+
+<user_request>
+${userPrompt}
+</user_request>`
 			}
 		];
 
